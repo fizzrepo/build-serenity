@@ -1,0 +1,30 @@
+name: Build SerenityOS on Push
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake ninja-build libncurses5-dev libncursesw5-dev git qemu-system-x86
+
+      - name: Build SerenityOS
+        run: |
+          git clone https://github.com/SerenityOS/serenity.git
+          cd serenity
+          Meta/serenity.sh build
+
+      - name: Test SerenityOS
+        run: |
+          cd serenity
+          Meta/run.sh
